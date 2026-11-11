@@ -1,0 +1,175 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>No Bathing Association</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#eaf5ff;color:#10234c}
+header{background:linear-gradient(120deg,#061b59,#087ee5);color:white;text-align:center;padding:35px 15px}
+header h1{font-size:30px}
+header p{font-size:21px;color:#ffe600;font-weight:bold}
+nav{background:#09245f;padding:14px;text-align:center;position:sticky;top:0}
+nav a{color:white;margin:0 8px;text-decoration:none;font-weight:bold}
+section{max-width:900px;margin:20px auto;padding:20px;background:white;border-radius:15px;box-shadow:0 3px 12px #0002}
+h2{text-align:center;color:#0755b5}
+.motto{background:#ffe127;padding:18px;text-align:center;font-weight:bold;font-size:23px;border-radius:10px}
+button{background:#0755c9;color:white;border:0;padding:11px 16px;border-radius:8px;font-weight:bold;cursor:pointer;margin:4px}
+input{width:100%;padding:12px;margin:7px 0 14px;border:1px solid #aaa;border-radius:7px}
+.calendar-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{background:#09245f;color:white;padding:10px 2px}
+td{border:1px solid #b7c9e5;text-align:center;padding:8px 2px;height:75px;font-size:12px}
+.bath{background:#d9f2ff}
+.no-bath{background:#ffe1e1}
+.day{display:block;font-size:19px;font-weight:bold}
+.status{font-weight:bold}
+.member{padding:10px;background:#edf4ff;margin:7px 0;border-radius:7px}
+footer{text-align:center;background:#09245f;color:white;padding:25px;margin-top:25px}
+@media(max-width:500px){header h1{font-size:25px}td{font-size:10px;height:65px}nav a{font-size:12px;margin:0 4px}}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🚿 NO BATHING ASSOCIATION</h1>
+<p>BATHING NO BE BY FORCE!</p>
+Freedom • Unity • Choice
+</header>
+
+<nav>
+<a href="#home">Home</a>
+<a href="#calendar">Calendar</a>
+<a href="#join">Join Us</a>
+<a href="#members">Members</a>
+</nav>
+
+<section id="home">
+<h2>WELCOME TO THE ASSOCIATION 😂</h2>
+<div class="motto">BATHING NO BE BY FORCE!</div>
+<p style="text-align:center">
+We stand for freedom, unity and good humour.
+Join the movement today!
+</p>
+</section>
+
+<section id="calendar">
+<h2>OUR BATHING CALENDAR</h2>
+<div class="calendar-head">
+<button onclick="changeMonth(-1)">❮ Previous</button>
+<h3 id="monthTitle"></h3>
+<button onclick="changeMonth(1)">Next ❯</button>
+</div>
+<p style="text-align:center">🔵 Bathing &nbsp; 🔴 No bathing</p>
+<table>
+<thead><tr>
+<th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th>
+<th>Thu</th><th>Fri</th><th>Sat</th>
+</tr></thead>
+<tbody id="calendarBody"></tbody>
+</table>
+<p style="text-align:center">
+Monday: Bath | Tuesday: No bath<br>
+Wednesday: Bath | Thursday: No bath<br>
+Friday: Bath | Saturday: No bath<br>
+Sunday: Bath
+</p>
+</section>
+
+<section id="join">
+<h2>BECOME A MEMBER</h2>
+<form id="joinForm">
+<label>Full name</label>
+<input id="fullName" required placeholder="Enter your name">
+<label>Nickname</label>
+<input id="nickname" placeholder="Your nickname">
+<label>Phone number</label>
+<input id="phone" required placeholder="Phone number">
+<button type="submit">JOIN THE ASSOCIATION</button>
+</form>
+<p id="message"></p>
+</section>
+
+<section id="members">
+<h2>OUR MEMBERS</h2>
+<h3>Total members: <span id="count">0</span></h3>
+<div id="memberList"></div>
+</section>
+
+<footer>
+<h2 style="color:#ffe600">NO BATHING ASSOCIATION</h2>
+<p>Bathing No Be By Force! 😂</p>
+<p>© 2026 No Bathing Association</p>
+</footer>
+
+<script>
+let current=new Date(2026,10,1);
+
+function drawCalendar(){
+let y=current.getFullYear(),m=current.getMonth();
+document.getElementById("monthTitle").textContent=
+current.toLocaleString("en",{month:"long"})+" "+y;
+let first=new Date(y,m,1).getDay();
+let total=new Date(y,m+1,0).getDate();
+let html="",day=1;
+for(let r=0;r<6&&day<=total;r++){
+html+="<tr>";
+for(let c=0;c<7;c++){
+if((r===0&&c<first)||day>total)html+="<td></td>";
+else{
+let bath=[0,1,3,5].includes(c);
+html+=`<td class="${bath?'bath':'no-bath'}">
+<span class="day">${day}</span>
+<span class="status">${bath?'🚿 Bath':'🚫 No bath'}</span>
+</td>`;
+day++;
+}
+}
+html+="</tr>";
+}
+document.getElementById("calendarBody").innerHTML=html;
+}
+function changeMonth(n){
+current.setMonth(current.getMonth()+n);
+drawCalendar();
+}
+
+function getMembers(){
+return JSON.parse(localStorage.getItem("nbaMembers")||"[]");
+}
+function safe(v){
+return String(v).replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",
+'"':"&quot;","'":"&#39;"
+}[c]));
+}
+function showMembers(){
+let members=getMembers();
+document.getElementById("count").textContent=members.length;
+document.getElementById("memberList").innerHTML=
+members.map((m,i)=>`<div class="member">
+<b>${i+1}. ${safe(m.name)}</b>
+${m.nickname?" ("+safe(m.nickname)+")":""}
+<br>Phone: ${safe(m.phone)}</div>`).join("");
+}
+document.getElementById("joinForm").addEventListener("submit",function(e){
+e.preventDefault();
+let members=getMembers();
+members.push({
+name:document.getElementById("fullName").value.trim(),
+nickname:document.getElementById("nickname").value.trim(),
+phone:document.getElementById("phone").value.trim()
+});
+localStorage.setItem("nbaMembers",JSON.stringify(members));
+this.reset();
+document.getElementById("message").textContent=
+"Welcome to the association! 🎉";
+showMembers();
+});
+drawCalendar();
+showMembers();
+</script>
+</body>
+</html>
